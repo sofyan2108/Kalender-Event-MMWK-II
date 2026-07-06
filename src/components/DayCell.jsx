@@ -1,10 +1,22 @@
 import React from 'react';
 import { format, isToday } from 'date-fns';
 import { getPasaran } from '../utils/javaneseCalendar';
+import { getHoliday } from '../utils/holidays';
 
 const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [] }) => {
   const isCurrentDay = isToday(day);
   const pasaran = getPasaran(day);
+  const dayOfWeek = day.getDay();
+  
+  // Calculate Holidays and Weekends
+  const isSunday = dayOfWeek === 0;
+  const isFriday = dayOfWeek === 5;
+  const holiday = getHoliday(day);
+  const isHoliday = !!holiday;
+
+  let colorClass = '';
+  if (isSunday || isHoliday) colorClass = 'text-red';
+  else if (isFriday) colorClass = 'text-green';
   
   // Calculate Hijri Day in Arabic Numerals (e.g., ١, ٢, ٣)
   let hijriDay = '';
@@ -22,8 +34,10 @@ const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [] }) => {
         ${!isCurrentMonth ? 'not-current-month' : ''} 
         ${isSelected ? 'selected' : ''} 
         ${isCurrentDay ? 'today' : ''}
+        ${colorClass}
       `}
       onClick={onClick}
+      title={holiday || ''}
     >
       <span className="day-hijri">{hijriDay}</span>
       <div className="day-number">{format(day, 'd')}</div>

@@ -71,9 +71,15 @@ const CalendarGrid = ({ selectedDate, setSelectedDate, viewMode, events, allAgen
 
       <div className="calendar-grid">
         {/* Days of week header */}
-        {weekDays.map((day) => (
-          <div key={day} className="weekday-header">{day}</div>
-        ))}
+        {weekDays.map((day, index) => {
+          let headerColor = '';
+          // weekDays is ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min']
+          // index 4 is 'Jum' (Friday), index 6 is 'Min' (Sunday)
+          if (index === 6) headerColor = 'text-red';
+          if (index === 4) headerColor = 'text-green';
+          
+          return <div key={day} className={`weekday-header ${headerColor}`}>{day}</div>;
+        })}
 
         {/* Days cells */}
         {days.map((day) => {
