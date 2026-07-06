@@ -5,6 +5,14 @@ import { getPasaran } from '../utils/javaneseCalendar';
 const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [] }) => {
   const isCurrentDay = isToday(day);
   const pasaran = getPasaran(day);
+  
+  // Calculate Hijri Day in Arabic Numerals (e.g., ١, ٢, ٣)
+  let hijriDay = '';
+  try {
+    hijriDay = new Intl.DateTimeFormat('ar-SA-u-ca-islamic', {day: 'numeric'}).format(day);
+  } catch (e) {
+    console.error("Hijri format error", e);
+  }
 
   // Example: events = [{id: 1, color: '#ff0000'}, {id: 2, color: '#00ff00'}]
   
@@ -17,6 +25,7 @@ const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [] }) => {
       `}
       onClick={onClick}
     >
+      <span className="day-hijri">{hijriDay}</span>
       <div className="day-number">{format(day, 'd')}</div>
       <div className="day-pasaran">{pasaran}</div>
       
