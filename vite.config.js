@@ -9,8 +9,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       manifest: {
-        name: 'Kalender Event Jawa',
-        short_name: 'KalenderJawa',
+        name: 'KALENDER EVENT MMWK II',
+        short_name: 'MMWK II',
         description: 'Aplikasi Kalender Event dengan Pasaran Jawa',
         theme_color: '#ffffff',
         background_color: '#ffffff',
