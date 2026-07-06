@@ -18,20 +18,25 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
         setCurrentUser(user);
-        // Fetch role from Firestore
-        try {
-          const docRef = doc(db, 'users', user.uid);
-          const docSnap = await getDoc(docRef);
-          
-          if (docSnap.exists()) {
-            setUserRole(docSnap.data().role);
-          } else {
-            console.warn("User document not found in Firestore!");
+        
+        if (user.isAnonymous) {
+          setUserRole('guest');
+        } else {
+          // Fetch role from Firestore
+          try {
+            const docRef = doc(db, 'users', user.uid);
+            const docSnap = await getDoc(docRef);
+            
+            if (docSnap.exists()) {
+              setUserRole(docSnap.data().role);
+            } else {
+              console.warn("User document not found in Firestore!");
+              setUserRole(null);
+            }
+          } catch (error) {
+            console.error("Error fetching user role:", error);
             setUserRole(null);
           }
-        } catch (error) {
-          console.error("Error fetching user role:", error);
-          setUserRole(null);
         }
       } else {
         setCurrentUser(null);

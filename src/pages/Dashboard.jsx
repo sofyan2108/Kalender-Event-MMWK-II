@@ -26,7 +26,7 @@ const Dashboard = () => {
       if (!userRole) return;
       try {
         let q;
-        if (userRole === 'superadmin') {
+        if (userRole === 'superadmin' || userRole === 'guest') {
           q = query(collection(db, 'events'));
         } else {
           q = query(collection(db, 'events'), where('adminIds', 'array-contains', currentUser.uid));
@@ -94,7 +94,9 @@ const Dashboard = () => {
       <header className="app-header">
         <div className="header-info">
           <h1>Kalender Event</h1>
-          <span className="role-badge">{userRole === 'superadmin' ? 'Super Admin' : 'Admin'}</span>
+          <span className="role-badge">
+            {userRole === 'superadmin' ? 'Super Admin' : userRole === 'guest' ? 'Tamu' : 'Admin'}
+          </span>
         </div>
         <div className="header-actions">
           {userRole === 'superadmin' && (

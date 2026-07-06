@@ -163,8 +163,9 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
                 <div className="agenda-item-header">
                   <div className="agenda-title-group" style={{ flexDirection: 'row', alignItems: 'center', gap: '0.75rem' }}>
                     <button 
-                      onClick={() => toggleAgendaStatus(agenda.id, isCompleted)} 
+                      onClick={() => userRole !== 'guest' && toggleAgendaStatus(agenda.id, isCompleted)} 
                       className="task-check-btn"
+                      style={{ cursor: userRole === 'guest' ? 'default' : 'pointer' }}
                     >
                       {isCompleted ? <CheckCircle size={22} color={eventDetails.color} /> : <Circle size={22} color="var(--text-secondary)" />}
                     </button>
