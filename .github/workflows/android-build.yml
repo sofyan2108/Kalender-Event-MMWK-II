@@ -23,6 +23,12 @@ jobs:
       - name: Install Dependencies
         run: npm install
 
+      - name: Copy Firebase Env Variables
+        run: |
+          if [ -f ".env.production" ]; then
+            cp .env.production .env
+          fi
+
       - name: Build Web App
         run: npm run build
 
@@ -39,6 +45,13 @@ jobs:
           else
             npx cap add android
           fi
+          
+          # Auto generate Android native icons from public/icon.jpeg
+          mkdir -p assets
+          if [ -f "public/icon.jpeg" ]; then
+            cp public/icon.jpeg assets/icon.jpeg
+          fi
+          npx @capacitor/assets generate --android --iconBackgroundColor '#ffffff'
 
       - name: Make Gradlew Executable
         working-directory: android
