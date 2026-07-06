@@ -152,7 +152,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1;
+  flex: 1.4;
   overflow: hidden;
 }
 
@@ -201,7 +201,8 @@ body {
   cursor: pointer;
   position: relative;
   transition: background-color 0.2s;
-  min-height: 0;
+  min-height: 55px;
+  padding-bottom: 6px;
 }
 
 .day-cell.text-red:not(.selected) {
@@ -277,8 +278,8 @@ body {
 }
 
 /* Bottom Detail Panel */
-.bottom-panel {
-  flex: 1;
+.detail-panel {
+  flex: 0.6;
   background-color: var(--panel-bg);
   padding: 1rem;
   overflow-y: auto;
