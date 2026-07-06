@@ -8,9 +8,12 @@ import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } 
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
+import { getHoliday } from '../utils/holidays';
+
 const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgendaChanged }) => {
   const [agendas, setAgendas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   
   const [showAddForm, setShowAddForm] = useState(false);
   const [newAgendaTitle, setNewAgendaTitle] = useState('');
@@ -20,6 +23,7 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
   const formattedDate = format(selectedDate, 'EEEE, d MMMM yyyy', { locale: id });
   const dateString = format(selectedDate, 'yyyy-MM-dd');
   const pasaran = getPasaran(selectedDate);
+  const holiday = getHoliday(selectedDate);
 
   const fetchAgendas = async () => {
     setLoading(true);
@@ -54,28 +58,28 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
       return;
     }
     
+    setIsSaving(true);
     const toastId = toast.loading('Menyimpan agenda...');
     try {
       await addDoc(collection(db, 'agendas'), {
         eventId: selectedEventId,
-        dateString,
-        time: newAgendaTime,
         title: newAgendaTitle,
+        time: newAgendaTime,
+        dateString: dateString,
         isCompleted: false,
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString()
       });
-      
+      toast.success('Agenda berhasil ditambahkan', { id: toastId });
+      setShowAddForm(false);
       setNewAgendaTitle('');
       setNewAgendaTime('');
-      setSelectedEventId('');
-      setShowAddForm(false);
       fetchAgendas();
       if (typeof onAgendaChanged === 'function') onAgendaChanged();
-      toast.success('Agenda berhasil ditambahkan!', { id: toastId });
     } catch (err) {
-      console.error("Error adding agenda:", err);
       toast.error('Gagal menambahkan agenda', { id: toastId });
+    } finally {
+      setIsSaving(false);
     }
   };
 
@@ -128,7 +132,10 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
   return (
     <div className="detail-panel">
       <div className="detail-header">
-        <h3>{formattedDate}</h3>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <h3>{formattedDate}</h3>
+          {holiday && <span style={{ color: 'var(--danger-color)', fontSize: '0.85rem', fontWeight: 600, marginTop: '2px' }}>{holiday}</span>}
+        </div>
         <span className="pasaran-badge">{pasaran}</span>
       </div>
 
