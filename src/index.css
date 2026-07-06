@@ -152,7 +152,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1.4;
+  flex: 1.25;
   overflow: hidden;
 }
 
@@ -267,8 +267,8 @@ body {
 }
 
 .bullet {
-  width: 4px;
-  height: 4px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
 }
 
@@ -279,7 +279,7 @@ body {
 
 /* Bottom Detail Panel */
 .detail-panel {
-  flex: 0.6;
+  flex: 0.75;
   background-color: var(--panel-bg);
   padding: 1rem;
   overflow-y: auto;
