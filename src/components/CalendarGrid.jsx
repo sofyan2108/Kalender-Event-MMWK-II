@@ -17,9 +17,14 @@ import {
 import { id } from 'date-fns/locale';
 import { useSwipeable } from 'react-swipeable';
 import DayCell from './DayCell';
+import { useHolidays } from '../hooks/useHolidays';
 
 const CalendarGrid = ({ selectedDate, setSelectedDate, viewMode, events, allAgendas }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
+  
+  // Ambil tahun berjalan dari currentDate untuk fetching libur nasional
+  const currentYear = currentDate.getFullYear();
+  const holidaysData = useHolidays(currentYear);
 
   const nextPeriod = () => {
     setCurrentDate(viewMode === 'monthly' ? addMonths(currentDate, 1) : addWeeks(currentDate, 1));
@@ -93,6 +98,8 @@ const CalendarGrid = ({ selectedDate, setSelectedDate, viewMode, events, allAgen
             return event ? event : null;
           }).filter(Boolean);
 
+          const holiday = holidaysData[dayString] || null;
+
           return (
             <DayCell 
               key={day.toString()} 
@@ -102,6 +109,7 @@ const CalendarGrid = ({ selectedDate, setSelectedDate, viewMode, events, allAgen
               isCurrentMonth={viewMode === 'weekly' ? true : isSameMonth(day, currentDate)}
               onClick={() => setSelectedDate(day)}
               events={dayEvents}
+              holiday={holiday}
             />
           );
         })}

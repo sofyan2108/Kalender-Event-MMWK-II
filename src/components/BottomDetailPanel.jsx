@@ -8,7 +8,7 @@ import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } 
 import { toast } from 'react-hot-toast';
 import { motion } from 'framer-motion';
 
-import { getHoliday } from '../utils/holidays';
+import { useHolidays } from '../hooks/useHolidays';
 
 const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgendaChanged }) => {
   const [agendas, setAgendas] = useState([]);
@@ -23,7 +23,9 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
   const formattedDate = format(selectedDate, 'EEEE, d MMMM yyyy', { locale: id });
   const dateString = format(selectedDate, 'yyyy-MM-dd');
   const pasaran = getPasaran(selectedDate);
-  const holiday = getHoliday(selectedDate);
+  
+  const holidaysData = useHolidays(selectedDate.getFullYear());
+  const holiday = holidaysData[dateString] || null;
 
   const fetchAgendas = async () => {
     setLoading(true);

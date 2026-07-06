@@ -1,9 +1,8 @@
 import React from 'react';
 import { format, isToday } from 'date-fns';
 import { getPasaran } from '../utils/javaneseCalendar';
-import { getHoliday } from '../utils/holidays';
 
-const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [] }) => {
+const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [], holiday }) => {
   const isCurrentDay = isToday(day);
   const pasaran = getPasaran(day);
   const dayOfWeek = day.getDay();
@@ -11,7 +10,6 @@ const DayCell = ({ day, isSelected, isCurrentMonth, onClick, events = [] }) => {
   // Calculate Holidays and Weekends
   const isSunday = dayOfWeek === 0;
   const isFriday = dayOfWeek === 5;
-  const holiday = getHoliday(day);
   const isHoliday = !!holiday;
 
   let colorClass = '';
