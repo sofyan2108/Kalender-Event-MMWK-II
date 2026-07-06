@@ -21,7 +21,16 @@ function App() {
 
   return (
     <AuthProvider>
-      <Toaster position="top-center" reverseOrder={false} />
+      <Toaster 
+        position="top-center" 
+        reverseOrder={false} 
+        toastOptions={{ 
+          duration: 2500 
+        }}
+        containerStyle={{
+          top: 'calc(env(safe-area-inset-top, 20px) + 10px)'
+        }}
+      />
       <Router>
         <Routes>
           <Route path="/login" element={<Login />} />
