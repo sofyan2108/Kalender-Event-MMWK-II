@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { format } from 'date-fns';
 import { id } from 'date-fns/locale';
 import { getPasaran } from '../utils/javaneseCalendar';
-import { PlusCircle, CheckCircle, Circle, Trash2, Plus, X } from 'lucide-react';
+import { PlusCircle, CheckCircle, Circle, Trash2, Edit2, Plus, X } from 'lucide-react';
 import { db } from '../firebase';
 import { collection, query, where, getDocs, addDoc, updateDoc, deleteDoc, doc } from 'firebase/firestore';
 import { toast } from 'react-hot-toast';
@@ -19,6 +19,11 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
   const [newAgendaTitle, setNewAgendaTitle] = useState('');
   const [newAgendaTime, setNewAgendaTime] = useState('');
   const [selectedEventId, setSelectedEventId] = useState('');
+
+  const [editingAgendaId, setEditingAgendaId] = useState(null);
+  const [editAgendaTitle, setEditAgendaTitle] = useState('');
+  const [editAgendaTime, setEditAgendaTime] = useState('');
+  const [editSelectedEventId, setEditSelectedEventId] = useState('');
 
   const formattedDate = format(selectedDate, 'EEEE, d MMMM yyyy', { locale: id });
   const dateString = format(selectedDate, 'yyyy-MM-dd');
@@ -61,7 +66,6 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
     }
     
     setIsSaving(true);
-    const toastId = toast.loading('Menyimpan agenda...');
     try {
       await addDoc(collection(db, 'agendas'), {
         eventId: selectedEventId,
@@ -72,14 +76,45 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
         createdBy: currentUser.uid,
         createdAt: new Date().toISOString()
       });
-      toast.success('Agenda berhasil ditambahkan', { id: toastId });
+      toast.success('Agenda berhasil ditambahkan! 🎉', {
+        duration: 2000,
+        style: { borderRadius: '10px', background: 'var(--bg-color)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }
+      });
       setShowAddForm(false);
       setNewAgendaTitle('');
       setNewAgendaTime('');
       fetchAgendas();
       if (typeof onAgendaChanged === 'function') onAgendaChanged();
     } catch (err) {
-      toast.error('Gagal menambahkan agenda', { id: toastId });
+      toast.error('Gagal menambahkan agenda');
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleEditAgenda = async (e) => {
+    e.preventDefault();
+    if (!editAgendaTitle.trim() || !editSelectedEventId || !editAgendaTime) {
+      toast.error("Judul agenda, event, dan jam harus diisi");
+      return;
+    }
+    
+    setIsSaving(true);
+    try {
+      await updateDoc(doc(db, 'agendas', editingAgendaId), {
+        eventId: editSelectedEventId,
+        title: editAgendaTitle,
+        time: editAgendaTime
+      });
+      toast.success('Agenda berhasil diperbarui! ✨', {
+        duration: 2000,
+        style: { borderRadius: '10px', background: 'var(--bg-color)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }
+      });
+      setEditingAgendaId(null);
+      fetchAgendas();
+      if (typeof onAgendaChanged === 'function') onAgendaChanged();
+    } catch (err) {
+      toast.error('Gagal mengubah agenda');
     } finally {
       setIsSaving(false);
     }
@@ -88,26 +123,28 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
   const handleDeleteAgenda = async (agendaId) => {
     toast((t) => (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-        <p style={{ margin: 0, fontWeight: 500 }}>Apakah Anda yakin ingin menghapus agenda ini?</p>
+        <p style={{ margin: 0, fontWeight: 500 }}>Hapus agenda ini?</p>
         <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end', marginTop: '0.5rem' }}>
           <button 
-            style={{ padding: '0.25rem 0.75rem', background: 'var(--border-color)', color: 'var(--text-primary)', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 600 }} 
+            style={{ padding: '0.35rem 0.75rem', background: 'var(--border-color)', color: 'var(--text-primary)', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 }} 
             onClick={() => toast.dismiss(t.id)}
           >
             Batal
           </button>
           <button 
-            style={{ padding: '0.25rem 0.75rem', background: 'var(--danger-color)', color: '#fff', borderRadius: '4px', border: 'none', cursor: 'pointer', fontWeight: 600 }} 
+            style={{ padding: '0.35rem 0.75rem', background: 'var(--danger-color)', color: '#fff', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 600 }} 
             onClick={async () => {
               toast.dismiss(t.id);
-              const toastId = toast.loading('Menghapus agenda...');
               try {
                 await deleteDoc(doc(db, 'agendas', agendaId));
                 fetchAgendas();
                 if (typeof onAgendaChanged === 'function') onAgendaChanged();
-                toast.success('Agenda berhasil dihapus', { id: toastId });
+                toast.success('Agenda dihapus 🗑️', { 
+                  duration: 2000,
+                  style: { borderRadius: '10px', background: 'var(--bg-color)', color: 'var(--text-primary)', border: '1px solid var(--border-color)' }
+                });
               } catch (err) {
-                toast.error('Gagal menghapus agenda', { id: toastId });
+                toast.error('Gagal menghapus agenda');
               }
             }}
           >
@@ -115,7 +152,7 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
           </button>
         </div>
       </div>
-    ), { duration: Infinity, id: `confirm-agenda-${agendaId}` });
+    ), { duration: Infinity, position: 'bottom-center', id: `confirm-agenda-${agendaId}` });
   };
 
   const toggleAgendaStatus = async (agendaId, currentStatus) => {
@@ -129,6 +166,13 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
 
   const getEventDetails = (eventId) => {
     return events.find(e => e.id === eventId) || { title: 'Unknown', color: '#ccc' };
+  };
+
+  const startEditAgenda = (agenda) => {
+    setEditingAgendaId(agenda.id);
+    setEditAgendaTitle(agenda.title);
+    setEditAgendaTime(agenda.time || '');
+    setEditSelectedEventId(agenda.eventId);
   };
 
   return (
@@ -150,6 +194,53 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
           agendas.map((agenda, index) => {
             const eventDetails = getEventDetails(agenda.eventId);
             const isCompleted = agenda.isCompleted || false;
+
+            if (editingAgendaId === agenda.id) {
+              return (
+                <motion.form 
+                  key={agenda.id}
+                  onSubmit={handleEditAgenda} 
+                  className="add-agenda-form premium-form"
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  style={{ border: `1px solid ${eventDetails.color}`, padding: '0.75rem', borderRadius: '0.5rem', background: 'var(--bg-color)' }}
+                >
+                  <select 
+                    value={editSelectedEventId} 
+                    onChange={(e) => setEditSelectedEventId(e.target.value)}
+                    required
+                    className="premium-input"
+                  >
+                    <option value="" disabled>Pilih Event...</option>
+                    {events.map(event => (
+                      <option key={event.id} value={event.id}>{event.title}</option>
+                    ))}
+                  </select>
+                  <div style={{ display: 'flex', gap: '0.5rem' }}>
+                    <input 
+                      type="time" 
+                      value={editAgendaTime}
+                      onChange={(e) => setEditAgendaTime(e.target.value)}
+                      required
+                      className="premium-input time-input"
+                    />
+                    <input 
+                      type="text" 
+                      placeholder="Judul Agenda..." 
+                      value={editAgendaTitle}
+                      onChange={(e) => setEditAgendaTitle(e.target.value)}
+                      autoFocus
+                      required
+                      className="premium-input title-input"
+                    />
+                  </div>
+                  <div className="form-actions">
+                    <button type="button" onClick={() => setEditingAgendaId(null)} className="btn-cancel" disabled={isSaving}>Batal</button>
+                    <button type="submit" className="btn-save" disabled={isSaving}>{isSaving ? 'Menyimpan...' : 'Simpan'}</button>
+                  </div>
+                </motion.form>
+              );
+            }
 
             return (
               <motion.div 
@@ -187,9 +278,14 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
                     </div>
                   </div>
                   {userRole === 'admin' && (
-                    <button className="icon-btn text-danger" onClick={() => handleDeleteAgenda(agenda.id)}>
-                      <Trash2 size={16} />
-                    </button>
+                    <div style={{ display: 'flex', gap: '0.25rem' }}>
+                      <button className="icon-btn" style={{ color: 'var(--text-secondary)' }} onClick={() => startEditAgenda(agenda)}>
+                        <Edit2 size={16} />
+                      </button>
+                      <button className="icon-btn text-danger" onClick={() => handleDeleteAgenda(agenda.id)}>
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
                   )}
                 </div>
               </motion.div>
@@ -198,7 +294,7 @@ const BottomDetailPanel = ({ selectedDate, userRole, currentUser, events, onAgen
         )}
       </div>
 
-      {userRole === 'admin' && events.length > 0 && !showAddForm && (
+      {userRole === 'admin' && events.length > 0 && !showAddForm && !editingAgendaId && (
         <button 
           className="btn-add-agenda" 
           onClick={() => setShowAddForm(true)}
