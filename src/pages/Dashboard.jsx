@@ -113,44 +113,45 @@ const Dashboard = () => {
         </div>
       </header>
 
-      {/* Top Panel: Calendar */}
-      <div className="top-panel">
-        <div className="view-toggle">
-          <button 
-            className={viewMode === 'monthly' ? 'active' : ''} 
-            onClick={() => setViewMode('monthly')}
-          >
-            Bulanan
-          </button>
-          <button 
-            className={viewMode === 'weekly' ? 'active' : ''} 
-            onClick={() => setViewMode('weekly')}
-          >
-            Mingguan
-          </button>
+      {/* Content Area: side by side on desktop */}
+      <div className="content-area">
+        {/* Left/Top Panel: Calendar */}
+        <div className="top-panel">
+          <div className="view-toggle">
+            <button 
+              className={viewMode === 'monthly' ? 'active' : ''} 
+              onClick={() => setViewMode('monthly')}
+            >
+              Bulanan
+            </button>
+            <button 
+              className={viewMode === 'weekly' ? 'active' : ''} 
+              onClick={() => setViewMode('weekly')}
+            >
+              Mingguan
+            </button>
+          </div>
+          <CalendarGrid 
+            selectedDate={selectedDate} 
+            setSelectedDate={setSelectedDate}
+            viewMode={viewMode}
+            events={events}
+            allAgendas={allAgendas}
+          />
         </div>
-        <CalendarGrid 
-          selectedDate={selectedDate} 
-          setSelectedDate={setSelectedDate}
-          viewMode={viewMode}
-          events={events} // Still pass events for color mapping
-          allAgendas={allAgendas} // Pass agendas to show accurate bullets
-        />
-      </div>
 
-      {/* Bottom Panel: Details */}
-      <div className="bottom-panel">
-        <BottomDetailPanel 
-          selectedDate={selectedDate} 
-          userRole={userRole} 
-          currentUser={currentUser}
-          events={events} 
-          onAgendaChanged={() => {
-            // Trigger a re-fetch of events to subsequently re-fetch agendas
-            // A simpler way: we can just re-assign the events array to trigger the useEffect
-            setEvents([...events]);
-          }}
-        />
+        {/* Right/Bottom Panel: Details */}
+        <div className="bottom-panel">
+          <BottomDetailPanel 
+            selectedDate={selectedDate} 
+            userRole={userRole} 
+            currentUser={currentUser}
+            events={events} 
+            onAgendaChanged={() => {
+              setEvents([...events]);
+            }}
+          />
+        </div>
       </div>
 
       {/* Super Admin Modal */}

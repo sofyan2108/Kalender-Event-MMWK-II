@@ -776,3 +776,212 @@ body {
   font-family: inherit;
   margin-bottom: 0.5rem;
 }
+
+/* ========================================
+   CONTENT AREA 
+   (wraps calendar + detail panel)
+   ======================================== */
+
+.content-area {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ========================================
+   DESKTOP / LAPTOP RESPONSIVE LAYOUT
+   (screens wider than 768px)
+   ======================================== */
+
+@media (min-width: 768px) {
+  /* Remove mobile constraint — use full width */
+  .mobile-layout {
+    max-width: 100%;
+  }
+
+  /* Header spans full width on desktop */
+  .app-header {
+    padding: 1rem 2rem;
+  }
+
+  .header-info h1 {
+    font-size: 1.5rem;
+  }
+
+  /* Calendar cells can be bigger */
+  .day-cell {
+    min-height: 70px;
+    padding-bottom: 8px;
+    border-radius: 0.625rem;
+  }
+
+  .day-number {
+    font-size: 1.125rem;
+  }
+
+  .day-pasaran {
+    font-size: 0.75rem;
+  }
+
+  .day-hijri {
+    font-size: 0.75rem;
+    top: 6px;
+    right: 8px;
+  }
+
+  .bullet {
+    width: 7px;
+    height: 7px;
+  }
+
+  .calendar-header h2 {
+    font-size: 1.375rem;
+  }
+
+  .weekday-header {
+    font-size: 0.875rem;
+    padding: 0.75rem 0;
+  }
+
+  .calendar-grid {
+    gap: 4px;
+  }
+
+  /* Detail panel styling */
+  .detail-header h3 {
+    font-size: 1.125rem;
+  }
+
+  .agenda-item {
+    padding: 1rem;
+  }
+
+  /* Super Admin Modal — center on desktop */
+  .superadmin-overlay {
+    align-items: center;
+  }
+
+  .superadmin-modal {
+    max-width: 600px;
+    height: auto;
+    max-height: 85vh;
+    border-radius: 1rem;
+  }
+
+  /* Login card a bit wider */
+  .login-card {
+    max-width: 440px;
+    padding: 2.5rem;
+  }
+}
+
+/* ========================================
+   LARGE DESKTOP (1024px+)
+   Side-by-side calendar + detail panel
+   ======================================== */
+
+@media (min-width: 1024px) {
+  .mobile-layout {
+    max-width: 100%;
+  }
+
+  .app-header {
+    padding: 1rem 2.5rem;
+  }
+
+  /* Content area becomes horizontal */
+  .content-area {
+    flex-direction: row;
+    flex: 1;
+    overflow: hidden;
+  }
+
+  /* Calendar takes ~60% width */
+  .top-panel {
+    flex: 1.2;
+    border-bottom: none;
+    border-right: 1px solid var(--border-color);
+    padding: 1.5rem 2rem;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Calendar container fills all available height */
+  .calendar-container {
+    flex: 1;
+  }
+
+  /* Detail panel takes ~40% width */
+  .bottom-panel {
+    flex: 0.8;
+    overflow-y: auto;
+  }
+
+  .detail-panel {
+    flex: unset;
+    padding: 1.5rem 2rem;
+  }
+
+  .calendar-header h2 {
+    font-size: 1.5rem;
+  }
+
+  .day-cell {
+    min-height: 80px;
+    padding-bottom: 10px;
+  }
+
+  .day-number {
+    font-size: 1.25rem;
+  }
+
+  .day-pasaran {
+    font-size: 0.8rem;
+  }
+
+  .day-hijri {
+    font-size: 0.8rem;
+    top: 8px;
+    right: 10px;
+  }
+
+  .bullet {
+    width: 8px;
+    height: 8px;
+  }
+
+  .superadmin-modal {
+    max-width: 700px;
+  }
+}
+
+/* ========================================
+   EXTRA LARGE DESKTOP (1440px+)
+   ======================================== */
+
+@media (min-width: 1440px) {
+  .mobile-layout {
+    max-width: 1600px;
+    margin: 0 auto;
+    border-left: 1px solid var(--border-color);
+    border-right: 1px solid var(--border-color);
+  }
+
+  .top-panel {
+    padding: 2rem 3rem;
+  }
+
+  .detail-panel {
+    padding: 2rem 3rem;
+  }
+
+  .day-cell {
+    min-height: 90px;
+  }
+
+  .day-number {
+    font-size: 1.375rem;
+  }
+}
