@@ -200,9 +200,11 @@ body {
   border-radius: 0.5rem;
   cursor: pointer;
   position: relative;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, box-shadow 0.2s;
   min-height: 55px;
   padding-bottom: 6px;
+  border: 1px solid var(--border-color);
+  background-color: var(--panel-bg);
 }
 
 .day-cell.text-red:not(.selected) {
@@ -261,20 +263,23 @@ body {
 
 .event-bullets {
   display: flex;
-  gap: 2px;
+  gap: 3px;
   position: absolute;
-  bottom: 4px;
+  bottom: 5px;
 }
 
 .bullet {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.25);
 }
 
 .bullet-more {
-  font-size: 6px;
-  line-height: 4px;
+  font-size: 7px;
+  line-height: 7px;
+  font-weight: 700;
+  color: var(--text-secondary);
 }
 
 /* Bottom Detail Panel */
